@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>HTML</title>
+    <link rel='stylesheet' type='text/css' href="{% static 'style.css' %}"/>
+    <script type="text/javascript" src="{% static 'script.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+
+  <body>
+      <h1>タグ検索サイト</h1>
+      <span>最適化したい単語を入力してください。</span>
+      <input type="text" size="50" id="input_word">
+      <button type="button" onclick="clickBtn()">セット</button>
+
+      <h2>title</h2>
+      <p id='title'></p>
+      <h2>url</h2>
+      <p id='url'></p>
+      <h2>description</h2>
+      <p id='description'></p>
+      <h2>tags</h2>
+      <p id='tags'></p>
+      <p id='tagNum'></p>
+
+      <div class="result">
+      </div>
+
+      <script>
+        function clickBtn() {
+            $('#title').text("");
+            $('#url').text("");
+            $('#description').text("");
+            $('#tags').text("");
+          var word = document.getElementById("input_word").value;
+          var data =
+            {
+              "word":word,
+            };
+
+          $.ajax({
+            //AWSのサーバーIP,URLに変える
+            url: "{% url 'tag:call_write_word' %}",
+            method: 'GET',
+            data: {"input_word": JSON.stringify(data)},
+            dataType: "json",
+            contentType: "application/json",
+            beforeSend: function(xhr, settings) {
+              if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrf_token);
+              }
+            },
+            error: function(xhr, status, error) {
+              console.log("error")
+            }
+          })
+          .done(function(data) {
+            console.log("Success"); 
+          })
+          .done(function(response){
+            // $('.result').prepend('<p>title' + response.title + '</p>');
+            $('#title').text(response.title);
+            // $('.result').prepend('<p>url' + response.url + '</p>');
+            $('#url').text(response.url);
+            // $('.result').prepend('<p>tags' + response.tags + '</p>');
+            $('#description').text(response.description);
+            // $('.result').prepend('<p>description' + response.description + '</p>');
+            $('#tags').text(response.tags);
+            $('#tagNum').text(response.tagNum);
+          });
+
+          // csrf_tokenの取得に使う
+          function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+                }
+              }
+            }
+            return cookieValue;
+          }
+
+          // ヘッダにcsrf_tokenを付与する関数
+          function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+          };
+
+          
+
+        }
+
+      </script>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+# import KeyEnum 
+print(KeyEnum.Key.TAGS)
+import get_youtubeData
+# print(KeyEnum.Key.TAGS)
+youtube = get_youtubeData.get_youtubeData('AIzaSyD_0S45BFbJ2Yo2nJmkxLteoxLZuES9Q9g')
+# youtube.setKeyNum('可愛い 猫',  5)
+# print(youtube.getdata(KeyEnum.KeyNum.TITLE))
+# print('---------------------------------------------------------------------------------')
+# print(youtube.getdata(KeyEnum.KeyNum.URL, UrlNum=2))
+# print('---------------------------------------------------------------------------------')
+# print(youtube.getdata(KeyEnum.KeyNum.DESCRIPTION))
+# print('---------------------------------------------------------------------------------')
+# print(youtube.getdata(KeyEnum.KeyNum.TAGS, TagNum=20, TagZip = False))
+# print('---------------------------------------------------------------------------------')
+print(youtube.analyze_set(["https://www.youtube.com/watch?v=KUXphRskUI4"]))
+youtube.analyze_do("こち亀")

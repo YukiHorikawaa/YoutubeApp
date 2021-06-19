@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>HTML</title>
+    <link rel='stylesheet' type='text/css' href="{% static 'style.css' %}"/>
+    <script type="text/javascript" src="{% static 'script.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+
+  <body>
+    <h1>Youtube解析サイト</h1>
+      <span>あなたのYoutube動画URLをコピペしてください。</span>
+      <br>
+      <input type="text" size="50" id="input_form">
+      <br>
+      <span>以下に最適化したいワードを登録してください。</span>
+      <br>
+      <input type="text" size="50" id="input_word">
+      <button type="button" onclick="clickBtn()">セット</button>
+
+      <h2>state</h2>
+      <p id='string'></p>
+      <h2>title</h2>
+      <p id='titleRate'></p>
+      <p id='title'></p>
+      <h2>description</h2>
+      <p id='descriptionRate'></p>
+      <p id='description'></p>
+      <h2>tags</h2>
+      <p id='tagRate'></p>
+      <p id='tags'></p>
+      <h2>url</h2>
+      <p id='urlScore'></p>
+      <p id='url'></p>
+      <h2>TotalScore</h2>
+      <p id='TotalScore'></p>
+      <script>
+        function clickBtn() {
+
+          $('#title').text("");
+          $('#titleRate').text("");
+          $('#description').text("");
+          $('#descriptionRate').text("");
+          $('#tags').text("");
+          $('#tagRate').text("");
+          $('#urlScore').text("");
+          $('#url').text("");
+          $('#TotalScore').text("");
+          $('#string').text("");
+          var url = document.getElementById("input_form").value;
+          var word = document.getElementById("input_word").value;
+          var data =
+            {
+              "url":url,
+              "word":word,
+            };
+
+          $.ajax({
+            url: "{% url 'myapp:call_write_data' %}",
+            method: 'GET',
+            data: {"input_data": JSON.stringify(data)},
+            dataType: "json",
+            contentType: "application/json",
+            beforeSend: function(xhr, settings) {
+              if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrf_token);
+              }
+            },
+            error: function(xhr, status, error) {
+              console.log("error")
+            }
+          })
+          .done(function(data) {
+            console.log("Success"); 
+          })
+          .done(function(response){
+
+            console.log("response");
+            $('#title').text(response.title);
+            $('#titleRate').text(response.titleRate);
+            $('#description').text(response.description);
+            $('#descriptionRate').text(response.descriptionRate);
+            $('#tags').text(response.tags);
+            $('#tagRate').text(response.tagRate);
+            $('#urlScore').text(response.urlScore);
+            $('#url').text(response.url);
+            $('#TotalScore').text(response.TotalScore);
+            $('#string').text(response.string);
+          });
+
+          // csrf_tokenの取得に使う
+          function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+              var cookies = document.cookie.split(';');
+              for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+                }
+              }
+            }
+            return cookieValue;
+          }
+
+          // ヘッダにcsrf_tokenを付与する関数
+          function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+          };
+        }
+
+      </script>
+  </body>
+</html>
