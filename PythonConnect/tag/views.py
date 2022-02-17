@@ -7,6 +7,7 @@ from .application import write_data
 from .application import get_youtubeData
 from .application.utils import get_json
 from .application import KeyEnum
+import json
 
 global output_dict
 
@@ -61,9 +62,15 @@ def call_write_word(req):
 
 
         output_dict = {'title':title, 'url':url, 'tags':list(tags), 'description':list(description), 'tagNum':list(Num)}
+        try:
+            encoded = json.dumps(output_dict)
+            print("httpresponse")
+            return HttpResponse(encoded, content_type = "application/json")
         # print(output_dict)
 
         # return ouput(req, output_dict)
         # return SearchTAG(req)
         # return render(req, 'SearchTAG.html', output_dict)
-        return JsonResponse(output_dict)
+        except: 
+            print("jsonresponse")
+            return JsonResponse(output_dict)

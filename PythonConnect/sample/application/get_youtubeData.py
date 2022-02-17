@@ -1,6 +1,7 @@
 import json
 import collections
-from apiclient.discovery import build
+from socket import timeout
+from googleapiclient.discovery import build
 import urllib.parse
 import unicodedata
 import re
@@ -82,7 +83,7 @@ class get_youtubeData:
 
                 #取得した動画をリストに格納
         id_list = []
-        youtube_query = self.youtube.search().list(q=self.Search_Key, part='id,snippet', maxResults=self.MAX_RESULT)
+        youtube_query = self.youtube.search(timeout = 2000).list(q=self.Search_Key, part='id,snippet', maxResults=self.MAX_RESULT)
         youtube_res = youtube_query.execute()
         result = youtube_res.get('items', [])
         # print("+++++++++++++++++++++++++++++++++++++++++++++\n")

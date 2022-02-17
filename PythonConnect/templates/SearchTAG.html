@@ -43,7 +43,9 @@
 
           $.ajax({
             //AWSのサーバーIP,URLに変える
-            url: "{% url 'tag:call_write_word' %}",
+            // url: "{% url 'tag:call_write_word' %}",
+            // url: "/tag/ajax/",
+            url: "http://52.199.115.16:8000/tag/ajax/",
             method: 'GET',
             data: {"input_word": JSON.stringify(data)},
             dataType: "json",
