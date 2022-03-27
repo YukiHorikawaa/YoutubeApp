@@ -190,18 +190,19 @@ class get_youtubeData:
                     tagtxt = ""
                     for tag in self.ANALYZE_TAGS[0]:
                         sum += len(tag)
-                        Place = 1 if self.findAllPos(tag, word) >= 0 else 0
+                        tagpos = self.findAllPos(tag, word)
+                        Place = tagpos if tagpos >= 0 else -1
                         tagcnt += 1
                         tagtxt += tag
                         
                     #     print(tag)
                     # print(sum)
-                    Place2 = self.findAllPos(tagtxt, word) if self.findAllPos(tagtxt, word) >= 0 else 0
+                    Place2 = self.findAllPos(tagtxt, word) 
                     if Place < Place2:
                         Place = Place2
                     if sum > self.tagTotalMax:
                         pt += 13.333
-                    if Place < self.tagPosMax:
+                    if Place < self.tagPosMax and Place != -1:
                         pt += 20
                     self.RATE_TAG = list((pt, tagNum, sum))
 
@@ -318,8 +319,13 @@ class get_youtubeData:
             print(shortText)
             print("------------------------------------------------------------------\n")
             Len = len(shortText)
-            Place = self.findAllPos(shortText, word) if self.findAllPos(shortText, word) >= 0 else 0
-            Rate = (1 - (Place/Len+0.0001))*self.scoreRate if Place != 0 else 0
+            Place = self.findAllPos(shortText, word) 
+            if Place == -1:
+                Rate = 0
+            elif Place == 0:
+                Rate = self.scoreRate
+            else:
+                Rate = (1 - (Place/Len+0.0001))*self.scoreRate
             trueLen = wordNum
                     
             return trueLen, Place, Rate
