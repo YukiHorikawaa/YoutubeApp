@@ -41,6 +41,8 @@ class get_youtubeData:
 
         #---------------点数計算用-----------------
         self.scoreRate = 33.333
+        self.tagPosMax = 60
+        self.tagTotalMax = 150
         
 
     #Django側でajaxで関数を走らせる時、このインスタンスが作成されるタイミングは、ページに遷移した時、ボタンを押すときは遷移時にし生成したインスタンスの関数を叩いているので、ページ遷移が発生しない間は常に同じインスタンスを扱うことになる
@@ -189,18 +191,20 @@ class get_youtubeData:
                     for tag in self.ANALYZE_TAGS[0]:
                         sum += len(tag)
                         Place = 1 if self.findAllPos(tag, word) >= 0 else 0
-                        if Place != 0 and tagcnt == 0:
-                            pt = self.scoreRate
                         tagcnt += 1
                         tagtxt += tag
                         
                     #     print(tag)
                     # print(sum)
-                    Place = self.findAllPos(tagtxt, word) if self.findAllPos(tagtxt, word) >= 0 else 0
-                    if Place>0:
-                        pt = self.scoreRate
+                    Place2 = self.findAllPos(tagtxt, word) if self.findAllPos(tagtxt, word) >= 0 else 0
+                    if Place < Place2:
+                        Place = Place2
+                    if sum > self.tagTotalMax:
+                        pt += 13.333
+                    if Place < self.tagPosMax:
+                        pt += 20
                     self.RATE_TAG = list((pt, tagNum, sum))
-                    
+
             except TypeError:
                 self.RATE_TAG = list((0, 0, 0))
         else:
