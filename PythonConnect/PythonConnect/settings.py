@@ -28,7 +28,8 @@ DEBUG = True
 
 # アクセス制限を無くす為にALLOWED_HOSTSを以下のようにする。
 # ただしセキュリティの観点でフルオープンにするのは良くないので、目的に応じてIPアドレスを細かく指定すること。
-ALLOWED_HOSTS = ["*"]
+
+ALLOWED_HOSTS = ["kotatsu.tv"]
 
 
 # Application definition
@@ -41,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'sample',
-    'tag'
+    'tag',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -52,9 +54,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'PythonConnect.urls'
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
 
 TEMPLATES = [
     {

@@ -54,7 +54,7 @@ def call_write_data(req):
                     description, descriptionRate = youtube.getDataToDjango(KeyEnum.KeyNum.DESCRIPTION)
                     tags, tagRate = youtube.getDataToDjango(KeyEnum.KeyNum.TAGS)
                     url, urlScore= youtube.getDataToDjango(KeyEnum.KeyNum.URL)
-                    TotalScore = titleRate[0] + descriptionRate[0] + tagRate[0] + urlScore
+                    TotalScore = titleRate[0] + descriptionRate[0] + tagRate[0]
                 except IndexError:
                     output_dict = {'error': int(2), 'string':str("Probably a misspelling.")}
                     print("おそらくタイプミス:{}".format(output_dict))

@@ -70,40 +70,43 @@ class get_youtubeData:
     def setKeyNum(self, Search_Key, MAX_RESULT):
         #検索したいキーワード
         self.Search_Key = Search_Key
-        #取得した動画をリストに格納
-        self.MAX_RESULT = MAX_RESULT
+        if self.Search_Key == "":
+            pass
+        else:
+            #取得した動画をリストに格納
+            self.MAX_RESULT = MAX_RESULT
 
-                #取得した動画をリストに格納
-        id_list = []
-        youtube_query = self.youtube.search().list(q=self.Search_Key, part='id,snippet', maxResults=self.MAX_RESULT)
-        youtube_res = youtube_query.execute()
-        result = youtube_res.get('items', [])
-        for item in result:
-            if item['id']['kind'] == 'youtube#video':
-                # print(item['snippet']['title'])
-                # print('https://www.youtube.com/watch?v=' + item['id']['videoId'])
-                id_list.append(item['id']['videoId'])
+                    #取得した動画をリストに格納
+            id_list = []
+            youtube_query = self.youtube.search().list(q=self.Search_Key, part='id,snippet', maxResults=self.MAX_RESULT)
+            youtube_res = youtube_query.execute()
+            result = youtube_res.get('items', [])
+            for item in result:
+                if item['id']['kind'] == 'youtube#video':
+                    # print(item['snippet']['title'])
+                    # print('https://www.youtube.com/watch?v=' + item['id']['videoId'])
+                    id_list.append(item['id']['videoId'])
 
-        VIDEO_ID_LIST = id_list
+            VIDEO_ID_LIST = id_list
 
-        for video_id in VIDEO_ID_LIST:
-            response = self.youtube.videos().list(
-            part = 'snippet,statistics',
-            id = video_id
-            ).execute()
+            for video_id in VIDEO_ID_LIST:
+                response = self.youtube.videos().list(
+                part = 'snippet,statistics',
+                id = video_id
+                ).execute()
 
-            for item in response.get("items", []):
-                if item["kind"] != "youtube#video":
-                    continue
-                self.OUTPUT_TITLE.append(self.get_key(item, self.Key.TITLE.value))
-                self.OUTPUT_URL.append(self.get_key(item, self.Key.URL.value))
-                self.OUTPUT_DESCRIPTION.append(self.get_key(item, self.Key.DESCRIPTION.value))
-                self.OUTPUT_TAGS.append(self.get_key(item, self.Key.TAGS.value))
-                
-        self.ALLDATA.append(self.set_data(self.OUTPUT_TITLE))
-        self.ALLDATA.append(self.set_data(self.OUTPUT_URL))
-        self.ALLDATA.append(self.set_data(self.OUTPUT_DESCRIPTION))
-        self.ALLDATA.append(self.count_data(self.OUTPUT_TAGS))
+                for item in response.get("items", []):
+                    if item["kind"] != "youtube#video":
+                        continue
+                    self.OUTPUT_TITLE.append(self.get_key(item, self.Key.TITLE.value))
+                    self.OUTPUT_URL.append(self.get_key(item, self.Key.URL.value))
+                    self.OUTPUT_DESCRIPTION.append(self.get_key(item, self.Key.DESCRIPTION.value))
+                    self.OUTPUT_TAGS.append(self.get_key(item, self.Key.TAGS.value))
+                    
+            self.ALLDATA.append(self.set_data(self.OUTPUT_TITLE))
+            self.ALLDATA.append(self.set_data(self.OUTPUT_URL))
+            self.ALLDATA.append(self.set_data(self.OUTPUT_DESCRIPTION))
+            self.ALLDATA.append(self.count_data(self.OUTPUT_TAGS))
 
     def getdata(self,  data_key, TagNum = 0, UrlNum = 0, TagZip = True):
         data_key = int(data_key)

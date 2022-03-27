@@ -7,6 +7,7 @@ from .application import write_data
 from .application import get_youtubeData
 from .application.utils import get_json
 from .application import KeyEnum
+import json
 
 global output_dict
 
@@ -66,4 +67,13 @@ def call_write_word(req):
         # return ouput(req, output_dict)
         # return SearchTAG(req)
         # return render(req, 'SearchTAG.html', output_dict)
-        return JsonResponse(output_dict)
+        try:
+            encoded = json.dumps(output_dict)
+            print(HttpResponse)
+            return HttpResponse(encoded, content_type = "application/json")
+        except:
+            print(JsonResponse)
+            response = JsonResponse(output_dict)
+            response['Access-Control-Allow-Origin'] = 'http://163.43.87.213:8000'
+            #response['Access-Control-Allow-Origin'] = 'http://127.0.0.1:8000'
+            return response

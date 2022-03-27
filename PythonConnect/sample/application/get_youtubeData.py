@@ -40,7 +40,7 @@ class get_youtubeData:
         self.RATE_TAG = []
 
         #---------------点数計算用-----------------
-        self.scoreRate = 25
+        self.scoreRate = 33.333
         
 
     #Django側でajaxで関数を走らせる時、このインスタンスが作成されるタイミングは、ページに遷移した時、ボタンを押すときは遷移時にし生成したインスタンスの関数を叩いているので、ページ遷移が発生しない間は常に同じインスタンスを扱うことになる
@@ -82,7 +82,7 @@ class get_youtubeData:
 
                 #取得した動画をリストに格納
         id_list = []
-        youtube_query = self.youtube.search().list(q=self.Search_Key, part='id,snippet', maxResults=self.MAX_RESULT)
+        youtube_query = self.youtube.search(timeout = 10000).list(q=self.Search_Key, part='id,snippet', maxResults=self.MAX_RESULT)
         youtube_res = youtube_query.execute()
         result = youtube_res.get('items', [])
         # print("+++++++++++++++++++++++++++++++++++++++++++++\n")
