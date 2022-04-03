@@ -19,7 +19,7 @@ def YoutubeSEO(req):
 
 # ajaxでurl指定したメソッド
 def call_write_data(req):
-    youtube = get_youtubeData.get_youtubeData('AIzaSyD_0S45BFbJ2Yo2nJmkxLteoxLZuES9Q9g')
+    youtube = get_youtubeData.get_youtubeData('AIzaSyDWn4f1TaQ6IwcSZBTv89a53O9FpU-xaJ8')
     print("get")
     print("SEO")
     if req.method == 'GET':
@@ -28,7 +28,7 @@ def call_write_data(req):
         # ajaxで送信したデータのうち"input_data"を指定して取得する。
         # write_data.write_csv(req.GET.get("input_data"))
         data = req.GET.get("input_data")
-        print(data)
+        # print(data)
         #-----------------jsonでデータ取得、加工-----------------------
         jsonmanager = get_json.get_json(data)
         url = jsonmanager.getUrl("url")
@@ -54,7 +54,7 @@ def call_write_data(req):
                     description, descriptionRate = youtube.getDataToDjango(KeyEnum.KeyNum.DESCRIPTION)
                     tags, tagRate = youtube.getDataToDjango(KeyEnum.KeyNum.TAGS)
                     url, urlScore= youtube.getDataToDjango(KeyEnum.KeyNum.URL)
-                    TotalScore = titleRate[0] + descriptionRate[0] + tagRate[0] + urlScore
+                    TotalScore = titleRate[0] + descriptionRate[0] + tagRate[0]
                 except IndexError:
                     output_dict = {'error': int(2), 'string':str("Probably a misspelling.")}
                     print("おそらくタイプミス:{}".format(output_dict))

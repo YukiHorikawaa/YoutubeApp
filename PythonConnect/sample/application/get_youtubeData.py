@@ -1,7 +1,6 @@
 import json
 import collections
-from socket import timeout
-from googleapiclient.discovery import build
+from apiclient.discovery import build
 import urllib.parse
 import unicodedata
 import re
@@ -41,7 +40,9 @@ class get_youtubeData:
         self.RATE_TAG = []
 
         #---------------点数計算用-----------------
-        self.scoreRate = 25
+        self.scoreRate = 33.333
+        self.tagPosMax = 60
+        self.tagTotalMax = 150
         
 
     #Django側でajaxで関数を走らせる時、このインスタンスが作成されるタイミングは、ページに遷移した時、ボタンを押すときは遷移時にし生成したインスタンスの関数を叩いているので、ページ遷移が発生しない間は常に同じインスタンスを扱うことになる
@@ -83,7 +84,7 @@ class get_youtubeData:
 
                 #取得した動画をリストに格納
         id_list = []
-        youtube_query = self.youtube.search(timeout = 2000).list(q=self.Search_Key, part='id,snippet', maxResults=self.MAX_RESULT)
+        youtube_query = self.youtube.search(timeout = 10000).list(q=self.Search_Key, part='id,snippet', maxResults=self.MAX_RESULT)
         youtube_res = youtube_query.execute()
         result = youtube_res.get('items', [])
         # print("+++++++++++++++++++++++++++++++++++++++++++++\n")
@@ -186,16 +187,25 @@ class get_youtubeData:
                     print("NOTAG")
                 else:
                     tagcnt = 0
+                    tagtxt = ""
                     for tag in self.ANALYZE_TAGS[0]:
                         sum += len(tag)
-                        Place = 1 if self.findAllPos(tag, word) >= 0 else 0
-                        if Place != 0 and tagcnt == 0:
-                            pt = self.scoreRate
+                        tagpos = self.findAllPos(tag, word)
+                        Place = tagpos if tagpos >= 0 else -1
                         tagcnt += 1
+                        tagtxt += tag
                         
                     #     print(tag)
                     # print(sum)
+                    Place2 = self.findAllPos(tagtxt, word) 
+                    if Place < Place2:
+                        Place = Place2
+                    if sum > self.tagTotalMax:
+                        pt += 13.333
+                    if Place < self.tagPosMax and Place != -1:
+                        pt += 20
                     self.RATE_TAG = list((pt, tagNum, sum))
+
             except TypeError:
                 self.RATE_TAG = list((0, 0, 0))
         else:
@@ -309,8 +319,13 @@ class get_youtubeData:
             print(shortText)
             print("------------------------------------------------------------------\n")
             Len = len(shortText)
-            Place = self.findAllPos(shortText, word) if self.findAllPos(shortText, word) >= 0 else 0
-            Rate = (1 - (Place/Len+0.0001))*self.scoreRate if Place != 0 else 0
+            Place = self.findAllPos(shortText, word) 
+            if Place == -1:
+                Rate = 0
+            elif Place == 0:
+                Rate = self.scoreRate
+            else:
+                Rate = (1 - (Place/Len+0.0001))*self.scoreRate
             trueLen = wordNum
                     
             return trueLen, Place, Rate

@@ -1,4 +1,4 @@
-{% load static %}
+<!-- {% load static %} -->
 <!DOCTYPE html>
 <html>
   <head>
@@ -11,58 +11,43 @@
   </head>
 
   <body>
-    <h1>Youtube解析サイト</h1>
-      <span>あなたのYoutube動画URLをコピペしてください。</span>
-      <br>
-      <input type="text" size="50" id="input_form">
-      <br>
-      <span>以下に最適化したいワードを登録してください。</span>
-      <br>
+      <h1>タグ検索サイト</h1>
+      <span>最適化したい単語を入力してください。</span>
       <input type="text" size="50" id="input_word">
       <button type="button" onclick="clickBtn()">セット</button>
 
-      <h2>state</h2>
-      <p id='string'></p>
       <h2>title</h2>
-      <p id='titleRate'></p>
       <p id='title'></p>
+      <h2>url</h2>
+      <p id='url'></p>
       <h2>description</h2>
-      <p id='descriptionRate'></p>
       <p id='description'></p>
       <h2>tags</h2>
-      <p id='tagRate'></p>
       <p id='tags'></p>
-      <h2>url</h2>
-      <p id='urlScore'></p>
-      <p id='url'></p>
-      <h2>TotalScore</h2>
-      <p id='TotalScore'></p>
+      <p id='tagNum'></p>
+
+      <div class="result">
+      </div>
+
       <script>
         function clickBtn() {
-
-          $('#title').text("");
-          $('#titleRate').text("");
-          $('#description').text("");
-          $('#descriptionRate').text("");
-          $('#tags').text("");
-          $('#tagRate').text("");
-          $('#urlScore').text("");
-          $('#url').text("");
-          $('#TotalScore').text("");
-          $('#string').text("");
-          var url = document.getElementById("input_form").value;
+            $('#title').text("");
+            $('#url').text("");
+            $('#description').text("");
+            $('#tags').text("");
           var word = document.getElementById("input_word").value;
           var data =
             {
-              "url":url,
               "word":word,
             };
 
           $.ajax({
-            // url: "https://kotatsu.tv:8000/ajax/",
-            url: "{% url 'myapp:call_write_data' %}",
+            //AWSのサーバーIP,URLに変える
+            // url: "{% url 'tag:call_write_word' %}",
+            // url: "/tag/ajax/",
+            url: "http://52.199.115.16:8000/tag/ajax/",
             method: 'GET',
-            data: {"input_data": JSON.stringify(data)},
+            data: {"input_word": JSON.stringify(data)},
             dataType: "json",
             contentType: "application/json",
             beforeSend: function(xhr, settings) {
@@ -78,18 +63,15 @@
             console.log("Success"); 
           })
           .done(function(response){
-
-            console.log("response");
+            // $('.result').prepend('<p>title' + response.title + '</p>');
             $('#title').text(response.title);
-            $('#titleRate').text(response.titleRate);
-            $('#description').text(response.description);
-            $('#descriptionRate').text(response.descriptionRate);
-            $('#tags').text(response.tags);
-            $('#tagRate').text(response.tagRate);
-            $('#urlScore').text(response.urlScore);
+            // $('.result').prepend('<p>url' + response.url + '</p>');
             $('#url').text(response.url);
-            $('#TotalScore').text(response.TotalScore);
-            $('#string').text(response.string);
+            // $('.result').prepend('<p>tags' + response.tags + '</p>');
+            $('#description').text(response.description);
+            // $('.result').prepend('<p>description' + response.description + '</p>');
+            $('#tags').text(response.tags);
+            $('#tagNum').text(response.tagNum);
           });
 
           // csrf_tokenの取得に使う
@@ -114,6 +96,9 @@
             // these HTTP methods do not require CSRF protection
             return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
           };
+
+          
+
         }
 
       </script>
