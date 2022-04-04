@@ -1,12 +1,19 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
+
 </head>
 <body>
-    <h1>{{ title }}</h1>
-    <p>{{ msg }}</p>
+    <meta charset="UTF-8">
+    <form action="", method="POST">
+    {% csrf_token %}
+    名前:<input type="text", name="name">
+    <input type="submit">
+    </form>
+    {% if name %}
+        {{ name }}さん、こんにちは
+    {% else %}
+        名前を記入ください
+    {% endif %}
 </body>
 </html>
