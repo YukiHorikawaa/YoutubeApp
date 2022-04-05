@@ -1,3 +1,4 @@
+from operator import truediv
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -106,12 +107,7 @@ def no_url(request):
         # write_data.pyのwrite_csv()メソッドを呼び出す。
         # ajaxで送信したデータのうち"input_data"を指定して取得する。
         # write_data.write_csv(request.GET.get("input_data"))
-        data = request.POST.get('input_word', None)
-        print(data)
-        #-----------------jsonでデータ取得、加工-----------------------
-        jsonmanager = get_json.get_json(data)
-        word = jsonmanager.getWord("word")
-        # print(word)
+        word = request.POST.get('input_word', None)
         #-----------------指定URLに対して指定単語でデータ解析-----------------------
         youtube.setKeyNum(word,  searchNum)
         title = youtube.getdata(KeyEnum.KeyNum.TITLE)
@@ -136,24 +132,19 @@ def no_url(request):
         #-----------------それぞれのデータ取得------------------------
         
         output_dict = {'title':title, 'url':url, 'tags':list(tags), 'description':list(description), 'tagNum':list(Num)}
-        # print(output_dict)
-
-        # return ouput(req, output_dict)
-        # return SearchTAG(req)
-        # return render(req, 'SearchTAG.html', output_dict)
-        try:
-            encoded = json.dumps(output_dict)
-            print(HttpResponse)
-            # return render(request, 'direct/no_url_SearchTAG.html', encoded)
-            #辞書型を渡す必要がありそう
-            return render(request, 'direct/no_url_SearchTAG.html', output_dict)
-        except:
-            print(JsonResponse)
-            response = JsonResponse(output_dict)
-            response['Access-Control-Allow-Origin'] = 'http://163.43.87.213:8000'
-            #response['Access-Control-Allow-Origin'] = 'http://127.0.0.1:8000'
-            return response
+        output_dict = json.dumps(output_dict)
+        return render(request, 'direct/no_url_SearchTAG_out.html', {"data":output_dict})
+        # return render(request, 'direct/no_url_SearchTAG_out.html', output_dict)
+        # try:
+        #     return render(request, 'direct/no_url_SearchTAG.html', output_dict)
+        # except:
+        #     print(JsonResponse)
+        #     response = JsonResponse(output_dict)
+        #     response['Access-Control-Allow-Origin'] = 'http://163.43.87.213:8000'
+        #     #response['Access-Control-Allow-Origin'] = 'http://127.0.0.1:8000'
+            # return response
 
     else:
+        print("normal")
         return render(request, 'direct/no_url_SearchTAG.html', output_dict)
 

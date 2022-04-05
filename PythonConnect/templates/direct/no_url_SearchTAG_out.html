@@ -51,3 +51,54 @@
       <!-- URLコピー用 -->
       <p id='tags'></p>
       <p>{{tags}}</p>
+
+      <script>
+    
+        // 取得結果を整形する
+        // @param data
+
+        // var tags3 = JSON.parse("{{tags | safe}}");
+        // console.log('data:' + tag3);
+
+        // {% autoescape off %}
+        // var tags3 = {{ tags3 }};
+        // {% endautoescape %}
+        // var data = JSON.parse("{{ data | safe }}");
+        var data = eval("{{ data | safe }}");
+        console.log('data:' + data);
+        function format(data) {
+            // タイトル&概要
+            data.title.forEach(function(element, index){
+              console.log('Index:' + index);
+              console.log('Element:' + element);
+              data.description.forEach(function(element2, index2){
+                console.log('Index:' + index2);
+                console.log('Element:' + element2);
+                if(index == index2){
+                  var no = 1;
+                  no += index;
+                  $('#titleTbody').append('<tr><td>' + no + '</td><td>'+ element +'</td><<td><font size="1">' 
+                    + element2.replace(/(\r\n|\n|\r)/gm, '<br>') + '</font></td></tr>');
+                }
+              });
+            });
+            // url
+            $('#url').text('url:' + data.url);
+            // タグ
+            data.tags.forEach(function(element, index){
+              console.log('Index:' + index);
+              console.log('Element:' + element);
+              data.tagNum.forEach(function(element2, index2){
+                console.log('Index:' + index2);
+                console.log('Element:' + element2);
+                if(index == index2){
+                  var no = 1;
+                  no += index;
+                  $('#tagTbody').append('<tr><td>' + no + '</td><td>' + element +'</td><<td>' + element2 + '</td></tr>');
+                }
+              });
+            });
+          }
+      </script>
+  </body>
+</html>
