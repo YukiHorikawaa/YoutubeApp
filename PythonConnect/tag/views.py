@@ -125,6 +125,11 @@ def no_url(request):
         if tags[0] == None:
             tags = tags[1:len(tags)]
             Num = Num[1:len(Num)]
+        
+        for i in range(len(tags)):
+            if tags[i] == None:
+                pop_num = i
+        tags.pop(pop_num)
         print(tags)
         print("----------------------------num--------------------")
         print(Num)
@@ -132,9 +137,9 @@ def no_url(request):
         #-----------------それぞれのデータ取得------------------------
         
         output_dict = {'title':title, 'url':url, 'tags':list(tags), 'description':list(description), 'tagNum':list(Num)}
-        output_dict = json.dumps(output_dict)
-        return render(request, 'direct/no_url_SearchTAG_out.html', {"data":output_dict})
-        # return render(request, 'direct/no_url_SearchTAG_out.html', output_dict)
+        # output_dict = json.dumps(output_dict)
+        # return render(request, 'direct/no_url_SearchTAG_out.html', {"data":output_dict})
+        return render(request, 'direct/no_url_SearchTAG_out.html', output_dict)
         # try:
         #     return render(request, 'direct/no_url_SearchTAG.html', output_dict)
         # except:

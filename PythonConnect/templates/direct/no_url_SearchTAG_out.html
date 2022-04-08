@@ -58,14 +58,17 @@
         // @param data
 
         // var tags3 = JSON.parse("{{tags | safe}}");
-        // console.log('data:' + tag3);
+        
 
         // {% autoescape off %}
-        // var tags3 = {{ tags3 }};
+        var tags = "{{tags | safe}}";
+        console.log('data:' + tags);
+        var title = {{title | safe}};
+        console.log('data:' + title);
         // {% endautoescape %}
         // var data = JSON.parse("{{ data | safe }}");
-        var data = eval("{{ data | safe }}");
-        console.log('data:' + data);
+        // var data = eval("{{ data | safe }}");
+        // console.log('data:' + data);
         function format(data) {
             // タイトル&概要
             data.title.forEach(function(element, index){

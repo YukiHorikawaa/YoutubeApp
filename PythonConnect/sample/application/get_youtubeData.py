@@ -5,6 +5,7 @@ import urllib.parse
 import unicodedata
 import re
 from . import KeyEnum 
+import math
 
 class get_youtubeData:
 
@@ -43,6 +44,12 @@ class get_youtubeData:
         self.scoreRate = 33.333
         self.tagPosMax = 60
         self.tagTotalMax = 150
+
+        #---------------アドバイス文章フラグ-----------
+        self.titleAdvice = False
+        self.descriptionAdvice = False
+        self.tagKeywordAdvice = False
+        self.tagTotalAdvice = False
         
 
     #Django側でajaxで関数を走らせる時、このインスタンスが作成されるタイミングは、ページに遷移した時、ボタンを押すときは遷移時にし生成したインスタンスの関数を叩いているので、ページ遷移が発生しない間は常に同じインスタンスを扱うことになる
@@ -173,8 +180,8 @@ class get_youtubeData:
         if len(self.ANALYZE_TITLE) > 0 and len(self.ANALYZE_DESCRIPTION) > 0:
             titleLen, titlePlace, titleRate = self.calc(self.ANALYZE_TITLE[0], word, KeyEnum.KeyNum.TITLE)
             desLen, desPlace, desRate = self.calc(self.ANALYZE_DESCRIPTION[0], word, KeyEnum.KeyNum.DESCRIPTION)
-            self.RATE_TITLE = list((titleRate, titleLen, titlePlace))
-            self.RATE_DESCRIPTION = list((desRate, desLen, desPlace))
+            self.RATE_TITLE = list((titleRate, titleLen, titlePlace, self.titleAdvice))
+            self.RATE_DESCRIPTION = list((desRate, desLen, desPlace, self.descriptionAdvice))
             try:
                 tagNum = len(self.ANALYZE_TAGS[0]) 
                 # print("tagNum:".format(tagNum))
@@ -202,9 +209,11 @@ class get_youtubeData:
                         Place = Place2
                     if sum > self.tagTotalMax:
                         pt += 13.333
+                        self.tagTotalAdvice = True
                     if Place < self.tagPosMax and Place != -1:
                         pt += 20
-                    self.RATE_TAG = list((pt, tagNum, sum))
+                        self.tagKeywordAdvice = True
+                    self.RATE_TAG = list((pt, tagNum, math.ceil(sum), [self.tagKeywordAdvice, self.tagTotalAdvice]))
 
             except TypeError:
                 self.RATE_TAG = list((0, 0, 0))
@@ -212,6 +221,9 @@ class get_youtubeData:
             print("Ïndexerror")
 
     def getDataToDjango(self, key):
+        """
+        生のAPIから撮ってきたデータ、文字数や点数など加工したデータ
+        """
         if key == KeyEnum.KeyNum.TITLE:
             List = []
             for i in self.ANALYZE_TITLE:
@@ -324,11 +336,20 @@ class get_youtubeData:
                 Rate = 0
             elif Place == 0:
                 Rate = self.scoreRate
+                if key == KeyEnum.KeyNum.TITLE:
+                    self.titleAdvice = True
+                elif key == KeyEnum.KeyNum.DESCRIPTION:
+                    self.descriptionAdvice = True
             else:
                 Rate = (1 - (Place/Len+0.0001))*self.scoreRate
+                if key == KeyEnum.KeyNum.TITLE:
+                    self.titleAdvice = True
+                elif key == KeyEnum.KeyNum.DESCRIPTION:
+                    self.descriptionAdvice = True
+
             trueLen = wordNum
                     
-            return trueLen, Place, Rate
+            return trueLen, Place, round(Rate, 3)
 
         except IndexError:
             # raise
