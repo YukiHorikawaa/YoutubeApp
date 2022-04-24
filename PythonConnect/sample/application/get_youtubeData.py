@@ -180,8 +180,9 @@ class get_youtubeData:
         if len(self.ANALYZE_TITLE) > 0 and len(self.ANALYZE_DESCRIPTION) > 0:
             titleLen, titlePlace, titleRate = self.calc(self.ANALYZE_TITLE[0], word, KeyEnum.KeyNum.TITLE)
             desLen, desPlace, desRate = self.calc(self.ANALYZE_DESCRIPTION[0], word, KeyEnum.KeyNum.DESCRIPTION)
-            self.RATE_TITLE = list((titleRate, titleLen, titlePlace, self.titleAdvice))
-            self.RATE_DESCRIPTION = list((desRate, desLen, desPlace, self.descriptionAdvice))
+            #----------------------------output----------------------------
+            self.RATE_TITLE = list((titleRate, titleLen, titlePlace, self.advice(KeyEnum.KeyNum.TITLE, self.titleAdvice)))
+            self.RATE_DESCRIPTION = list((desRate, desLen, desPlace, self.advice(KeyEnum.KeyNum.DESCRIPTION, self.descriptionAdvice)))
             try:
                 tagNum = len(self.ANALYZE_TAGS[0]) 
                 # print("tagNum:".format(tagNum))
@@ -213,7 +214,9 @@ class get_youtubeData:
                     if Place < self.tagPosMax and Place != -1:
                         pt += 20
                         self.tagKeywordAdvice = True
-                    self.RATE_TAG = list((pt, tagNum, math.ceil(sum), [self.tagKeywordAdvice, self.tagTotalAdvice]))
+
+                    #----------------------------output----------------------------
+                    self.RATE_TAG = list((pt, tagNum, math.ceil(sum), self.advice(KeyEnum.KeyNum.TAGS, self.tagKeywordAdvice, self.tagTotalAdvice)))
 
             except TypeError:
                 self.RATE_TAG = list((0, 0, 0))
@@ -349,7 +352,7 @@ class get_youtubeData:
 
             trueLen = wordNum
                     
-            return trueLen, Place, round(Rate, 3)
+            return trueLen, Place, round(Rate)
 
         except IndexError:
             # raise
@@ -374,3 +377,27 @@ class get_youtubeData:
             print('error:\n  URLは\"https://www.youtube.com/watch?\"か')
             print('  \"https://youtu.be/\"で始まるURLを指定してください。')
             return False
+
+    def advice(self, key, flag, flagNum = False):
+        strAdvice1 = -1
+        strAdvice2 = -1
+        if key == KeyEnum.KeyNum.TITLE:
+            if flag:
+                strAdvice1 = "タイトルにターゲットキーワードが入力されています。"
+            else:
+                strAdvice1 = "タイトルの早い段階でターゲットキーワード使いましょう。"
+        elif key == KeyEnum.KeyNum.DESCRIPTION:
+            if flag:
+                strAdvice1 = "説明にターゲットキーワードが入力されています。"
+            else:
+                strAdvice1 = "説明の早い段階でターゲットキーワード使いましょう。"
+        elif key == KeyEnum.KeyNum.TAGS:
+            if flag:
+                strAdvice1 = "タグにターゲットキーワードが入力されています。"
+            else:
+                strAdvice1 = "タグに早い段階でターゲットキーワードを使いましょう"
+            if flagNum:
+                strAdvice2 = "タグに多くのキーワードが設定されています。全く関係ないタグ設定は逆効果ですが、動画内で触れてる内容はタグ設定しましょう。"
+            else:
+                strAdvice2 = "グをもう少し追加しましょう。全く関係ないタグ設定は逆効果ですが、動画内で触れてる内容はタグ設定しましょう。"
+        return [strAdvice1, strAdvice2]
