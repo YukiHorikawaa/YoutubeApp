@@ -1,49 +1,70 @@
-{% load static %}
+<!-- {% load static %} -->
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>HTML</title>
-    <link rel='stylesheet' type='text/css' href="{% static 'style.css' %}"/>
-    <script type="text/javascript" src="{% static 'script.js' %}"></script>
+    <!-- <link rel='stylesheet' type='text/css' href="{% static 'style.css' %}"/>
+    <script type="text/javascript" src="{% static 'script.js' %}"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <!-- Bootstrap Javascript(jQuery含む) -->
+    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> 
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   </head>
 
   <body>
-      <h1>タグ検索サイト</h1>
-      <span>最適化したい単語を入力してください。</span>
-      <input type="text" size="50" id="input_word">
-      <button type="button" onclick="clickBtn()">セット</button>
-
-      <h2>title</h2>
-      <p id='title'></p>
-      <h2>url</h2>
-      <p id='url'></p>
-      <h2>description</h2>
-      <p id='description'></p>
-      <h2>tags</h2>
-      <p id='tags'></p>
-      <p id='tagNum'></p>
-
-      <div class="result">
+      <div class="jumbotron">
+        <div class="container">
+          <h1 class="display-3">タグ検索サイト</h1>
+          <form>
+            <label class="col-5">最適化したい単語を入力してください。</label>
+            <div class="input-group col-5">
+              <input type="text" class="form-control" id="input_word"/>
+              <span class="input-group-btn">
+                <button type="button" onclick="clickBtn()" class="btn btn-primary">検索</button>
+              </span>
+            </div>
+          </form>
+        </div>
       </div>
+
+      <div class="table-responsive col-5">
+        <table class="table table-sm table-bordered">
+          <tbody>
+            <tr>
+              <th>no</th>
+              <th>tags</th>
+              <th>tagNm</th>
+            </tr>
+          </tbody>
+          <tbody id='tagTbody'>
+          </tbody>
+        </table>
+      </div>
+      <h2>tags</h2>
+      <!-- URLコピー用 -->
+      <p id='tags'></p>
 
       <script>
         function clickBtn() {
-            $('#title').text("");
-            $('#url').text("");
-            $('#description').text("");
-            $('#tags').text("");
+          $("#titleTbody").empty();
+          $("#tagTbody").empty();
+          $("#url").text("");
+          $('#tags').text("");
           var word = document.getElementById("input_word").value;
           var data =
             {
               "word":word,
             };
-
           $.ajax({
             //AWSのサーバーIP,URLに変える
             url: "{% url 'tag:call_write_word' %}",
+            // url: "/tag/ajax/",
+            // url: "https://kotatsu.tv:8000/tag/ajax/",
             method: 'GET',
             data: {"input_word": JSON.stringify(data)},
             dataType: "json",
@@ -61,15 +82,8 @@
             console.log("Success"); 
           })
           .done(function(response){
-            // $('.result').prepend('<p>title' + response.title + '</p>');
-            $('#title').text(response.title);
-            // $('.result').prepend('<p>url' + response.url + '</p>');
-            $('#url').text(response.url);
-            // $('.result').prepend('<p>tags' + response.tags + '</p>');
-            $('#description').text(response.description);
-            // $('.result').prepend('<p>description' + response.description + '</p>');
+            format(response);
             $('#tags').text(response.tags);
-            $('#tagNum').text(response.tagNum);
           });
 
           // csrf_tokenの取得に使う
@@ -94,11 +108,43 @@
             // these HTTP methods do not require CSRF protection
             return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
           };
-
-          
-
         }
 
+        // 取得結果を整形する
+        // @param response
+        function format(response) {
+            // タイトル&概要
+            response.title.forEach(function(element, index){
+              console.log('Index:' + index);
+              console.log('Element:' + element);
+              response.description.forEach(function(element2, index2){
+                console.log('Index:' + index2);
+                console.log('Element:' + element2);
+                if(index == index2){
+                  var no = 1;
+                  no += index;
+                  $('#titleTbody').append('<tr><td>' + no + '</td><td>'+ element +'</td><<td><font size="1">' 
+                    + element2.replace(/(\r\n|\n|\r)/gm, '<br>') + '</font></td></tr>');
+                }
+              });
+            });
+            // url
+            $('#url').text('url:' + response.url);
+            // タグ
+            response.tags.forEach(function(element, index){
+              console.log('Index:' + index);
+              console.log('Element:' + element);
+              response.tagNum.forEach(function(element2, index2){
+                console.log('Index:' + index2);
+                console.log('Element:' + element2);
+                if(index == index2){
+                  var no = 1;
+                  no += index;
+                  $('#tagTbody').append('<tr><td>' + no + '</td><td>' + element +'</td><<td>' + element2 + '</td></tr>');
+                }
+              });
+            });
+          }
       </script>
   </body>
 </html>

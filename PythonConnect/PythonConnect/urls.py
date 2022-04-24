@@ -20,5 +20,5 @@ urlpatterns = [
     
     path('admin/', admin.site.urls),
     path(r'', include('sample.urls')), # ここを追記
-    path('tag/', include('tag.urls')),
+    path('app/', include('tag.urls')),
 ]

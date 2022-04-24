@@ -16,7 +16,8 @@ def index(req):
     return render(req, 'index.html')
 def YoutubeSEO(req):
     return render(req, 'YoutubeSEO.html')
-
+def Terms_service(req):
+    return render(req, 'Terms_service.html')
 # ajaxでurl指定したメソッド
 def call_write_data(req):
     youtube = get_youtubeData.get_youtubeData('AIzaSyD_0S45BFbJ2Yo2nJmkxLteoxLZuES9Q9g')
@@ -76,7 +77,7 @@ def call_write_data(req):
                 
                 # output_dict = {'title':str(title), 'titleRate':str(titleRate), 'description':str(description), 'descriptionRate':str(descriptionRate), 'tags':str(tags), 'tagRate':str(tagRate)}
                 output_dict = {'title':title, 'titleRate':titleRate, 'description':description, 'descriptionRate':descriptionRate,'tags':tags,'tagRate':tagRate,'urlScore':urlScore,'url':url, 'TotalScore':TotalScore, 'string':str("Successfully analyzed.")}
-
+                # output_dict = {'title':title, 'titleRate':titleRate, 'description':description, 'descriptionRate':descriptionRate,'tags':tags,'tagRate':tagRate,'urlScore':urlScore,'url':url, 'TotalScore':TotalScore, 'string':str("Successfully analyzed."), 'input_word':str(word)}
                 print(output_dict)
                 return JsonResponse(output_dict)
             else:
@@ -89,3 +90,32 @@ def errorHandler(errNum, errString):
     output_dict = {'error': int(errNum), 'string':str(errString)}
     print("おそらくタイプミス:{}".format(output_dict))
     return JsonResponse(output_dict)
+
+
+def no_url(request):
+    youtube = get_youtubeData.get_youtubeData('AIzaSyDWn4f1TaQ6IwcSZBTv89a53O9FpU-xaJ8')
+    print("get")
+    print("SEO")
+    if request.method == 'POST':
+        url = request.POST.get("url", None)
+        word = request.POST.get("word", None)
+        if youtube.urlCheck(url):
+            print(url)
+            print(word)
+            #-----------------指定URLに対して指定単語でデータ解析-----------------------
+            youtube.analyze_set([url])
+            youtube.analyze_do(word)
+            #-----------------それぞれのデータ取得------------------------
+            title, titleRate = youtube.getDataToDjango(KeyEnum.KeyNum.TITLE)
+            description, descriptionRate = youtube.getDataToDjango(KeyEnum.KeyNum.DESCRIPTION)
+            tags, tagRate = youtube.getDataToDjango(KeyEnum.KeyNum.TAGS)
+            url, urlScore= youtube.getDataToDjango(KeyEnum.KeyNum.URL)
+            TotalScore = round(titleRate[0] + descriptionRate[0] + tagRate[0])
+        print("title:{}\n description:{}\n tag:{}".format(titleRate, descriptionRate, tagRate))
+        output_dict = {'title':title, 'titleRate':titleRate, 'description':description, 'descriptionRate':descriptionRate,'tags':tags,'tagRate':tagRate,'urlScore':urlScore,'url':url, 'TotalScore':TotalScore, 'string':str("Successfully analyzed."), 'input_word':str(word)}
+        print(output_dict)
+        return render(request, 'direct/no_url_YoutubeSEO_out.html', output_dict)
+    else:
+        print("normal")
+        return render(request, 'direct/no_url_YoutubeSEO.html')
+
