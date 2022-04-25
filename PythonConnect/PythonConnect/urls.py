@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include # includeを追記
-from django.conf import settings
-from django.contrib.staticfiles import views
-from django.urls import re_path
+# from django.conf import settings
+# from django.contrib.staticfiles import views
+# from django.urls import re_path
 
 urlpatterns = [
     
@@ -26,8 +26,8 @@ urlpatterns = [
     path('app/', include('tag.urls')),
 ]
 
-#for static method
-if settings.DEBUG:
-    urlpatterns += [
-        re_path(r'^static/(?P<path>.*)$', views.serve),
-    ]
+# #for static method
+# if settings.DEBUG:
+#     urlpatterns += [
+#         re_path(r'^static/(?P<path>.*)$', views.serve),
+#     ]
