@@ -15,7 +15,7 @@ urlpatterns = [
     path("app/Terms_service/", views.Terms_service, name="Terms_service"),
 ]
 #for static method
-if settings.DEBUG:
-    urlpatterns += [
-        re_path(r'^static/(?P<path>.*)$', views.serve),
-    ]
+# if settings.DEBUG:
+#     urlpatterns += [
+#         re_path(r'^static/(?P<path>.*)$', views.serve),
+#     ]
