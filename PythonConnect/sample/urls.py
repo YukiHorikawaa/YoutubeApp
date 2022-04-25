@@ -1,5 +1,8 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.contrib.staticfiles import views
+from django.urls import re_path
 
 app_name = 'myapp'
 urlpatterns = [
@@ -11,3 +14,8 @@ urlpatterns = [
     path("app/seo_out/", views.no_url, name="no_url_YoutubeSEO_out"),
     path("app/Terms_service/", views.Terms_service, name="Terms_service"),
 ]
+#for static method
+if settings.DEBUG:
+    urlpatterns += [
+        re_path(r'^static/(?P<path>.*)$', views.serve),
+    ]
