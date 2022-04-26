@@ -18,6 +18,7 @@ from django.urls import path, include # includeを追記
 # from django.conf import settings
 # from django.contrib.staticfiles import views
 # from django.urls import re_path
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     
@@ -25,6 +26,7 @@ urlpatterns = [
     path(r'', include('sample.urls')), # ここを追記
     path('app/', include('tag.urls')),
 ]
+urlpatterns += staticfiles_urlpatterns()
 
 # #for static method
 # if settings.DEBUG:
