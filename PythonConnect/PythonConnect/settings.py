@@ -29,7 +29,7 @@ DEBUG = True
 # アクセス制限を無くす為にALLOWED_HOSTSを以下のようにする。
 # ただしセキュリティの観点でフルオープンにするのは良くないので、目的に応じてIPアドレスを細かく指定すること。
 
-ALLOWED_HOSTS = ["kotatsu.tv"]
+ALLOWED_HOSTS = ["kotatsu.tv", "127.0.0.1"]
 
 
 # Application definition
