@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'', include('sample.urls')), # ここを追記
     path('app/', include('tag.urls')),
+    path('cognitoSample/', include('cognitoSample.urls')),#cognitoSample
 ]
